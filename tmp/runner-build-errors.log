@@ -1,0 +1,2 @@
+# github.com/jainam240101/doc-create/server/dto
+server\dto\Users.go:9:39: syntax error: unexpected ProfilePic, expecting semicolon or newline or }
