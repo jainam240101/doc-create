@@ -31,7 +31,7 @@ func (d UserRepositoryDb) FindUserById(id string) (*UserModel, error) {
 
 func (d UserRepositoryDb) SearchUser(searchString string) ([]UserModel, error) {
 	var userModel []UserModel
-	if err := d.Client.Where("name LIKE ? OR username LIKE ?", searchString, searchString).Find(&userModel).Error; err != nil {
+	if err := d.Client.Where("LOWER(name) LIKE ? OR username LIKE ?", searchString, searchString).Find(&userModel).Error; err != nil {
 		fmt.Println("Error --- ", err.Error())
 		return nil, err
 	}
