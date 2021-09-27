@@ -70,11 +70,11 @@ func (db DefaultUserService) SearchUser(searchString string) ([]dto.UserResponse
 
 func (db DefaultUserService) UpdateUser(u users.UserModel, userid string) (*dto.UserResponse, error) {
 	if u.Password != "" {
-		pass, _ := HashPassword(u.Password)
+		pass, err := HashPassword(u.Password)
 		u.Password = pass
-		// 	if err != nil {
-		// 	return nil, err
-		// }
+			if err != nil {
+			return nil, err
+		}
 	}
 	dbValue, err := db.repo.UpdateUser(userid, u)
 	if err != nil {

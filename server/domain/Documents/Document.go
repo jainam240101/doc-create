@@ -32,5 +32,8 @@ type DocumentRepository interface {
 	CreateDocument(DocumentModel) (*DocumentModel, error)
 	SearchPublsihedDocument(string) ([]DocumentModel, error)
 	OwnedDocuments(string) ([]DocumentModel, error)
-	ReadDocument() (*DocumentModel, error)
+	ReadSpecificProjectUsingSlug(string) (*DocumentModel, error)
+	ReadDocument(string, string, DocumentModel) (*DocumentModel, error)
+	UpdateDocument(string, string, DocumentModel) (*DocumentModel, error)
+	DeleteDocument(string, string,) (error)
 }

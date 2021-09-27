@@ -16,5 +16,8 @@ func DocumentRoutes(apiRouter *gin.RouterGroup, db *gorm.DB) {
 		route.GET("/get-document", dh.ReadDocument)
 		route.GET("/search", dh.FindDocumentByQuery)
 		route.GET("/my-documents", dh.OwnedDocument)
+		route.GET("/document/:slug", dh.ReadDocumentUsingSlug)
+		route.PUT("/:slug", dh.UpdateDocument)
+		route.DELETE("/:slug", dh.DeleteDocument)
 	}
 }

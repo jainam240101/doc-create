@@ -61,3 +61,43 @@ func (dh *DocumentHandlers) OwnedDocument(c *gin.Context) {
 	}
 	helpers.SendSuccessResponse(c, 200, data)
 }
+
+func (dh *DocumentHandlers) ReadDocumentUsingSlug(c *gin.Context) {
+	slug := c.Param("slug")
+	data, err := dh.Service.GetDocumentData(slug)
+	if err != nil {
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}
+
+func (dh *DocumentHandlers) UpdateDocument(c *gin.Context) {
+	slug := c.Param("slug")
+	userId := "1234"
+	d := domain.DocumentModel{}
+	if err := c.ShouldBindJSON(&d); err != nil {
+		fmt.Println(err.Error())
+		helpers.SendErrorResponse(c, 406, "Body Not proper")
+		return
+	}
+	data, err := dh.Service.UpdateDocument(slug, userId, d)
+	if err != nil {
+		fmt.Println(err.Error())
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}
+
+func (dh *DocumentHandlers) DeleteDocument(c *gin.Context) {
+	slug := c.Param("slug")
+	userId := "1234"
+	err := dh.Service.DeleteDocument(userId, slug)
+	if err != nil {
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, "Deleted")
+
+}
