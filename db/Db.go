@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	documents "github.com/jainam240101/doc-create/server/domain/Documents"
+	pages "github.com/jainam240101/doc-create/server/domain/Pages"
 	users "github.com/jainam240101/doc-create/server/domain/Users"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -32,5 +33,5 @@ func Init() {
 	if err != nil {
 		fmt.Println("Database Error ---  ", err)
 	}
-	DB.AutoMigrate(&users.UserModel{}, &documents.DocumentModel{})
+	DB.AutoMigrate(&users.UserModel{}, &documents.DocumentModel{}, &pages.PageModel{})
 }

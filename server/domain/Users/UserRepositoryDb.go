@@ -58,3 +58,38 @@ func (db UserRepositoryDb) DeleteUser(userId string) error {
 	}
 	return nil
 }
+
+func (db UserRepositoryDb) CreateBookmark(id string, slug string) (*UserModel, error) {
+	var user UserModel
+	if err := db.Client.Where("id=?", id).First(&user).Error; err != nil {
+		fmt.Println("Error --- ", err.Error())
+		return nil, err
+	}
+	bookmarks := user.Bookmarks
+	bookmarks = append(bookmarks, slug)
+	user.Bookmarks = bookmarks
+	if err := db.Client.Save(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+func (db UserRepositoryDb) DeleteBookmark(id string, slug string) (*UserModel, error) {
+	var user UserModel
+	if err := db.Client.Where("id=?", id).First(&user).Error; err != nil {
+		fmt.Println("Error --- ", err.Error())
+		return nil, err
+	}
+	finalData:=[]string{}
+	bookmarks := user.Bookmarks
+	for i, v := range bookmarks {
+    	if v == slug {
+        	finalData = append(finalData[:i], finalData[i+1:]...)
+        	break
+    	}
+	}
+	user.Bookmarks = finalData
+	if err := db.Client.Save(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

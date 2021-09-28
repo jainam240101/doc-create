@@ -88,3 +88,35 @@ func (uh *Userhandlers) DeleteUser(c *gin.Context) {
 	}
 	helpers.SendSuccessResponse(c, 200, "User Deleted")
 }
+
+//For using Bookmarks
+type body struct {
+	ProjectId string `json:"projectId"`
+}
+
+func (uh *Userhandlers) CreateBookmark(c *gin.Context) {
+	var b body
+	if err := c.BindJSON(&b); err != nil {
+		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
+		return
+	}
+	data, err := uh.Service.CreateBookmark("1f4100c5-42a4-48e2-b3e1-07120fab9a80", b.ProjectId)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}
+func (uh *Userhandlers) DeleteBookmark(c *gin.Context) {
+	var b body
+	if err := c.BindJSON(&b); err != nil {
+		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
+		return
+	}
+	data, err := uh.Service.DeleteBookmark("1f4100c5-42a4-48e2-b3e1-07120fab9a80", b.ProjectId)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}

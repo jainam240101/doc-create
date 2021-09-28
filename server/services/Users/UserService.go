@@ -19,6 +19,8 @@ type UserService interface {
 	SearchUser(string) ([]dto.UserResponse, error)
 	UpdateUser(users.UserModel, string) (*dto.UserResponse, error)
 	DeleteUser(string) error
+	CreateBookmark(string, string) (*dto.UserResponse, error)
+	DeleteBookmark(string, string) (*dto.UserResponse, error)
 }
 
 func NewCustomerService(repository users.UserRepositoryDb) DefaultUserService {
@@ -72,7 +74,7 @@ func (db DefaultUserService) UpdateUser(u users.UserModel, userid string) (*dto.
 	if u.Password != "" {
 		pass, err := HashPassword(u.Password)
 		u.Password = pass
-			if err != nil {
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -89,4 +91,19 @@ func (db DefaultUserService) DeleteUser(userId string) error {
 		return err
 	}
 	return nil
+}
+
+func (db DefaultUserService) CreateBookmark(userId string, slug string) (*dto.UserResponse, error) {
+	data, err := db.repo.CreateBookmark(userId, slug)
+	if err != nil {
+		return nil, err
+	}
+	return data.ToDto(), nil
+}
+func (db DefaultUserService) DeleteBookmark(userId string, slug string) (*dto.UserResponse, error) {
+	data, err := db.repo.DeleteBookmark(userId, slug)
+	if err != nil {
+		return nil, err
+	}
+	return data.ToDto(), nil
 }

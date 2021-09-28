@@ -52,8 +52,6 @@ func (db DocumentRepositoryDb) ReadSpecificProjectUsingSlug(slug string) (*Docum
 }
 
 func (db DocumentRepositoryDb) UpdateDocument(id string, slug string, userId string, updates DocumentModel) (*DocumentModel, error) {
-	fmt.Println("Update --- ", updates.Name)
-	fmt.Println("Update --- ", updates.Slug)
 	var documentModel DocumentModel
 	if err := db.Client.Model(&DocumentModel{}).Where("owner_id = ? AND slug= ? AND status= ?", userId, slug, "ongoing").Updates(updates).Error; err != nil {
 		fmt.Println("Error --- ", err)
