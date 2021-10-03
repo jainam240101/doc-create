@@ -43,6 +43,15 @@ func (db DocumentRepositoryDb) OwnedDocuments(userid string) ([]DocumentModel, e
 	}
 	return documentModel, nil
 }
+
+func (db DocumentRepositoryDb) ReadAllProjectsPublishedByUser(userid string) ([]DocumentModel, error) {
+	var documentModel []DocumentModel
+	if err := db.Client.Where("owner_id=? and status=?", userid, "Published").Find(&documentModel).Error; err != nil {
+		return nil, err
+	}
+	return documentModel, nil
+}
+
 func (db DocumentRepositoryDb) ReadSpecificProjectUsingSlug(slug string) (*DocumentModel, error) {
 	var documentModel DocumentModel
 	if err := db.Client.Where("slug=? AND status=?", slug, "Published").Find(&documentModel).Error; err != nil {

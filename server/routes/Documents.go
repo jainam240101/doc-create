@@ -12,12 +12,12 @@ func DocumentRoutes(apiRouter *gin.RouterGroup, db *gorm.DB) {
 	dh := handlers.DocumentHandlers{Service: service.NewDocumentService(domain.NewRepositoryDb(db))}
 	route := apiRouter.Group("/documents")
 	{
-		route.POST("/create-document", dh.CreateDocument)
-		route.GET("/get-document", dh.ReadDocument)
+		route.POST("/create-document", dh.CreateDocument) //Protected
 		route.GET("/search", dh.FindDocumentByQuery)
-		route.GET("/my-documents", dh.OwnedDocument)
+		route.GET("/published-documents", dh.ReadAllProjectsPublishedByUser)
+		route.GET("/my-documents", dh.OwnedDocument) //Protected
 		route.GET("/document/:slug", dh.ReadDocumentUsingSlug)
-		route.PUT("/:slug", dh.UpdateDocument)
-		route.DELETE("/:slug", dh.DeleteDocument)
+		route.PUT("/:slug", dh.UpdateDocument)    //Protected
+		route.DELETE("/:slug", dh.DeleteDocument) //Protected
 	}
 }

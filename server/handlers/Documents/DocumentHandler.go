@@ -62,6 +62,16 @@ func (dh *DocumentHandlers) OwnedDocument(c *gin.Context) {
 	helpers.SendSuccessResponse(c, 200, data)
 }
 
+func (dh *DocumentHandlers) ReadAllProjectsPublishedByUser(c *gin.Context) {
+	userId := "1234"
+	data, err := dh.Service.ReadAllProjectsPublishedByUser(userId)
+	if err != nil {
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}
+
 func (dh *DocumentHandlers) ReadDocumentUsingSlug(c *gin.Context) {
 	slug := c.Param("slug")
 	data, err := dh.Service.GetDocumentData(slug)

@@ -19,6 +19,7 @@ type DocumentService interface {
 	ReadDocument() (*documents.DocumentModel, error)
 	SearchDocument(string) ([]dto.DocumentResponse, error)
 	OwnedDocuments(string) ([]dto.DocumentResponse, error)
+	ReadAllProjectsPublishedByUser(string) ([]dto.DocumentResponse, error)
 	GetDocumentData(string) (*dto.DocumentResponse, error)
 	UpdateDocument(string, string, documents.DocumentModel) (*dto.DocumentResponse, error)
 	DeleteDocument(string, string) error
@@ -61,6 +62,17 @@ func (db DefaultDocumentService) SearchDocument(searchString string) ([]dto.Docu
 }
 func (db DefaultDocumentService) OwnedDocuments(userid string) ([]dto.DocumentResponse, error) {
 	data, err := db.repo.OwnedDocuments(userid)
+	if err != nil {
+		return nil, err
+	}
+	finalData := []dto.DocumentResponse{}
+	for _, values := range data {
+		finalData = append(finalData, *values.ToDto())
+	}
+	return finalData, nil
+}
+func (db DefaultDocumentService) ReadAllProjectsPublishedByUser(userid string) ([]dto.DocumentResponse, error) {
+	data, err := db.repo.ReadAllProjectsPublishedByUser(userid)
 	if err != nil {
 		return nil, err
 	}
