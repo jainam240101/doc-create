@@ -35,6 +35,4 @@ type UserRepository interface {
 	SearchUser(string) ([]UserModel, error)
 	UpdateUser(string, UserModel) (*UserModel, error)
 	DeleteUser(string) error
-	CreateBookmark(string, string) (*UserModel, error)
-	DeleteBookmark(string, string) (*UserModel, error)
 }

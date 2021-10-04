@@ -94,16 +94,32 @@ func (db DefaultUserService) DeleteUser(userId string) error {
 }
 
 func (db DefaultUserService) CreateBookmark(userId string, slug string) (*dto.UserResponse, error) {
-	data, err := db.repo.CreateBookmark(userId, slug)
+	user, err := db.repo.FindUserById(userId)
 	if err != nil {
 		return nil, err
 	}
-	return data.ToDto(), nil
+	user.Bookmarks = append(user.Bookmarks, slug)
+	finalValue, err := db.repo.UpdateUser(userId, *user)
+	if err != nil {
+		return nil, err
+	}
+	return finalValue.ToDto(), nil
 }
 func (db DefaultUserService) DeleteBookmark(userId string, slug string) (*dto.UserResponse, error) {
-	data, err := db.repo.DeleteBookmark(userId, slug)
+	user, err := db.repo.FindUserById(userId)
 	if err != nil {
 		return nil, err
 	}
-	return data.ToDto(), nil
+	var newBookmarks []string
+	for _, value := range user.Bookmarks {
+		if value != slug {
+			newBookmarks = append(newBookmarks, value)
+		}
+	}
+	user.Bookmarks = newBookmarks
+	finalValue, err := db.repo.UpdateUser(userId, *user)
+	if err != nil {
+		return nil, err
+	}
+	return finalValue.ToDto(), nil
 }

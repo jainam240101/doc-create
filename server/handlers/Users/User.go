@@ -100,7 +100,7 @@ func (uh *Userhandlers) CreateBookmark(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
 		return
 	}
-	data, err := uh.Service.CreateBookmark("1f4100c5-42a4-48e2-b3e1-07120fab9a80", b.ProjectId)
+	data, err := uh.Service.CreateBookmark("27eff3d7-e657-4d91-936e-fd22c46337d5", b.ProjectId)
 	if err != nil {
 		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -113,7 +113,7 @@ func (uh *Userhandlers) DeleteBookmark(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
 		return
 	}
-	data, err := uh.Service.DeleteBookmark("1f4100c5-42a4-48e2-b3e1-07120fab9a80", b.ProjectId)
+	data, err := uh.Service.DeleteBookmark("27eff3d7-e657-4d91-936e-fd22c46337d5", b.ProjectId)
 	if err != nil {
 		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
