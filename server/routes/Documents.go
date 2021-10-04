@@ -17,7 +17,8 @@ func DocumentRoutes(apiRouter *gin.RouterGroup, db *gorm.DB) {
 		route.GET("/published-documents", dh.ReadAllProjectsPublishedByUser)
 		route.GET("/my-documents", dh.OwnedDocument) //Protected
 		route.GET("/document/:slug", dh.ReadDocumentUsingSlug)
-		route.PUT("/:slug", dh.UpdateDocument)    //Protected
-		route.DELETE("/:slug", dh.DeleteDocument) //Protected
+		route.PUT("/:slug", dh.UpdateDocument)     //Protected
+		route.DELETE("/:slug", dh.DeleteDocument)  //Protected
+		route.POST("/fork/:slug", dh.ForkDocument) //Protected
 	}
 }

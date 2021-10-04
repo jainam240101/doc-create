@@ -13,7 +13,7 @@ type PageModel struct {
 	OwnerId     string
 	DocumentId  string `json:"documentId" gorm:"column:document_id"`
 	Name        string `json:"name"`
-	Slug        string `json:"slug"`
+	Slug        string
 	Description string `json:"description"`
 	Content     string `json:"content" gorm:"text"`
 	OrderNo     int    `json:"orderNo"`
@@ -35,6 +35,5 @@ type PageRepository interface {
 	GetDataofPage(string) (*PageModel, error)
 	UpdatePage(PageModel) (*PageModel, error)
 	DeletePage() error
-	// ChangeOrder(interface{}) ([]PageModel, error)
-	ChangeOrder(string, []string)
+	ChangeOrder(string, interface{}) ([]PageModel, error)
 }

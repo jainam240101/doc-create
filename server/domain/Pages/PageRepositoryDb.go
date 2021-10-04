@@ -64,13 +64,18 @@ func (db PageRepositoryDb) DeletePage(slug string) error {
 	return nil
 }
 
-func (db PageRepositoryDb) ChangeOrder(documentId string, data []string) {
+func (db PageRepositoryDb) ChangeOrder(documentId string, data []string) ([]PageModel, error) {
 	for i, value := range data {
 		fmt.Println("Index -- ", i)
 		fmt.Println("Value -- ", value)
-		if err := db.Client.Model(&PageModel{}).Where("slug = ? and document_id=?", value, documentId).Updates(PageModel{OrderNo: i}).Error; err != nil {
+		if err := db.Client.Model(&PageModel{}).Where("slug = ? and document_id=?", value, documentId).Updates(PageModel{OrderNo: i + 1}).Error; err != nil {
 			fmt.Println("Error -- ", err)
 			// return nil, err
 		}
 	}
+	var finalData []PageModel
+	if err := db.Client.Where("document_id = ?", documentId).Order("order_no asc").Find(&finalData).Error; err != nil {
+		return nil, err
+	}
+	return finalData, nil
 }

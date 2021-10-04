@@ -15,8 +15,9 @@ func PageRoutes(apiRouter *gin.RouterGroup, db *gorm.DB) {
 		route.POST("/create-page", ph.CreatePage) //Protected
 		route.GET("/getTitles/:documentId", ph.GetTitlesOfADocument)
 		route.GET("/:slug", ph.GetDataofPage)
-		route.PUT("/:slug", ph.UpdatePage)         //Protected
-		route.DELETE("/:slug", ph.DeletePage)      //Protected
+		route.PUT("/:slug", ph.UpdatePage)                     //Protected
+		route.DELETE("/:slug", ph.DeletePage)                  //Protected
 		route.POST("change-order/:documentId", ph.ChangeOrder) //Protected
+		route.POST("/fork", ph.ForkPage)                       //Protected
 	}
 }

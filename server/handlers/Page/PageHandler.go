@@ -110,6 +110,31 @@ func (ph *PageHandlers) ChangeOrder(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body has parameters missing")
 		return
 	}
-	ph.Service.ChangeOrder(documentId, body.Order)
-	helpers.SendSuccessResponse(c, 200, "Check Logs")
+	data, err := ph.Service.ChangeOrder(documentId, body.Order)
+	if err != nil {
+		fmt.Println("Error --- ", err)
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
+}
+
+func (ph *PageHandlers) ForkPage(c *gin.Context) {
+	type Body struct {
+		ForkFrom      string `json:"forkFrom"`
+		NewDocumentId string `json:"newDocumentId"`
+	}
+	var data Body
+	if err := c.BindJSON(&data); err != nil {
+		helpers.SendErrorResponse(c, 406, "Body has parameters missing")
+		return
+	}
+	userId := "2401"
+	err := ph.Service.ForkPages(data.ForkFrom, userId, data.NewDocumentId)
+	if err != nil {
+		fmt.Println("Error --- ", err)
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, "Forked")
 }

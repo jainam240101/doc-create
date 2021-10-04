@@ -10,11 +10,11 @@ type DocumentModel struct {
 	gorm.Model
 	ID          uuid.UUID `gorm:"type:char(36);primary_key"`
 	OwnerId     string
-	Name        string            `json:"name"`
-	Slug        string            `json:"slug"`
-	Status      string            `json:"status" gorm:"default:ongoing"`
-	Description string            `json:"description" gorm:"type:text"`
-	Font        string            `json:"font"`
+	Name        string `json:"name"`
+	Slug        string
+	Status      string `json:"status" gorm:"default:ongoing"`
+	Description string `json:"description" gorm:"type:text"`
+	Font        string `json:"font"`
 }
 
 func (d DocumentModel) ToDto() *dto.DocumentResponse {

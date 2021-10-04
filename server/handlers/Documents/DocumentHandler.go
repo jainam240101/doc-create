@@ -74,6 +74,10 @@ func (dh *DocumentHandlers) ReadAllProjectsPublishedByUser(c *gin.Context) {
 
 func (dh *DocumentHandlers) ReadDocumentUsingSlug(c *gin.Context) {
 	slug := c.Param("slug")
+	if slug == "" {
+		helpers.SendErrorResponse(c, 406, "No Slug Provided")
+		return
+	}
 	data, err := dh.Service.GetDocumentData(slug)
 	if err != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
@@ -84,6 +88,10 @@ func (dh *DocumentHandlers) ReadDocumentUsingSlug(c *gin.Context) {
 
 func (dh *DocumentHandlers) UpdateDocument(c *gin.Context) {
 	slug := c.Param("slug")
+	if slug == "" {
+		helpers.SendErrorResponse(c, 406, "No Slug Provided")
+		return
+	}
 	userId := "1234"
 	d := domain.DocumentModel{}
 	if err := c.ShouldBindJSON(&d); err != nil {
@@ -102,6 +110,10 @@ func (dh *DocumentHandlers) UpdateDocument(c *gin.Context) {
 
 func (dh *DocumentHandlers) DeleteDocument(c *gin.Context) {
 	slug := c.Param("slug")
+	if slug == "" {
+		helpers.SendErrorResponse(c, 406, "No Slug Provided")
+		return
+	}
 	userId := "1234"
 	err := dh.Service.DeleteDocument(userId, slug)
 	if err != nil {
@@ -109,5 +121,20 @@ func (dh *DocumentHandlers) DeleteDocument(c *gin.Context) {
 		return
 	}
 	helpers.SendSuccessResponse(c, 200, "Deleted")
+
+}
+func (dh *DocumentHandlers) ForkDocument(c *gin.Context) {
+	slug := c.Param("slug")
+	if slug == "" {
+		helpers.SendErrorResponse(c, 406, "No Slug Provided")
+		return
+	}
+	userId := "2401"
+	data, err := dh.Service.ForkDocument(slug, userId)
+	if err != nil {
+		helpers.SendErrorResponse(c, 406, err.Error())
+		return
+	}
+	helpers.SendSuccessResponse(c, 200, data)
 
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	pages "github.com/jainam240101/doc-create/server/domain/Pages"
 	"github.com/jainam240101/doc-create/server/dto"
+	"github.com/jainam240101/doc-create/server/helpers"
 )
 
 type DefaultPageService struct {
@@ -23,7 +24,8 @@ type PageService interface {
 	GetDataofPage(string) (*dto.PageResponse, error)
 	UpdatePage(string, pages.PageModel) (*dto.PageResponse, error)
 	DeletePage(string) error
-	ChangeOrder(string,[]string)
+	ChangeOrder(string, []string) ([]Title, error)
+	ForkPages(string, string,string) error
 }
 
 func NewPageService(repo pages.PageRepositoryDb) DefaultPageService {
@@ -32,7 +34,7 @@ func NewPageService(repo pages.PageRepositoryDb) DefaultPageService {
 
 func (db DefaultPageService) CreatePage(page pages.PageModel) (*dto.PageResponse, error) {
 	page.ID = uuid.New()
-	page.Slug = page.Slug + "--" + page.ID.String()
+	page.Slug = helpers.CreateSlug(page.Name) + "--" + page.ID.String()
 	data, err := db.repo.CreateNewPage(page)
 	if err != nil {
 		return nil, err
@@ -84,10 +86,40 @@ func (db DefaultPageService) DeletePage(slug string) error {
 	return nil
 }
 
-func (db DefaultPageService) ChangeOrder(documentId string,value []string) {
-	db.repo.ChangeOrder(documentId,value)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
+func (db DefaultPageService) ChangeOrder(documentId string, value []string) ([]Title, error) {
+	data, err := db.repo.ChangeOrder(documentId, value)
+	if err != nil {
+		return nil, err
+	}
+	var titles []Title
+	if err != nil {
+		fmt.Println("Error --- ", err)
+		return nil, err
+	}
+	for _, v := range data {
+		titles = append(titles, Title{
+			Title: v.Name,
+			Slug:  v.Slug,
+		})
+	}
+	return titles, nil
+}
+
+func (db DefaultPageService) ForkPages(documentId string, ownerId string,newDocumentId string) error {
+	data, err := db.repo.GetTitlesofDocument(documentId)
+	if err != nil {
+		fmt.Println("Error --- ", err)
+		return err
+	}
+	for _, value := range data {
+		value.ID = uuid.New()
+		value.OwnerId=ownerId
+		value.Slug = helpers.CreateSlug(value.Name) + "--" + value.ID.String()
+		value.DocumentId=newDocumentId
+		_, err := db.repo.CreateNewPage(value)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
