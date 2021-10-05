@@ -33,7 +33,8 @@ type PageRepository interface {
 	CreatePage(PageModel) (*PageModel, error)
 	GetTitlesofDocument(string) ([]PageModel, error)
 	GetDataofPage(string) (*PageModel, error)
-	UpdatePage(PageModel) (*PageModel, error)
-	DeletePage() error
-	ChangeOrder(string, interface{}) ([]PageModel, error)
+	UpdatePage(string, PageModel, string) (*PageModel, error)
+	DeletePage(string,string) error
+	EditingPage(string,string) (*PageModel, error)
+	ChangeOrder(string, interface{},string) ([]PageModel, error)
 }

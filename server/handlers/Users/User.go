@@ -29,12 +29,12 @@ func (uh *Userhandlers) CreateUser(c *gin.Context) {
 }
 
 func (uh *Userhandlers) FindUserById(c *gin.Context) {
-	id := c.Request.URL.Query().Get("id")
-	if id == "" {
-		helpers.SendErrorResponse(c, 406, "No Id Provided")
+	username := c.Request.URL.Query().Get("username")
+	if username == "" {
+		helpers.SendErrorResponse(c, 406, "No username Provided")
 		return
 	}
-	user, err := uh.Service.FindUserById(id)
+	user, err := uh.Service.FindUserByUsername(username)
 	if err != nil {
 		helpers.SendErrorResponse(c, 404, err.Error())
 		return
@@ -100,7 +100,12 @@ func (uh *Userhandlers) CreateBookmark(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
 		return
 	}
-	data, err := uh.Service.CreateBookmark("27eff3d7-e657-4d91-936e-fd22c46337d5", b.ProjectId)
+	userId, err := middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	data, err := uh.Service.CreateBookmark(userId, b.ProjectId)
 	if err != nil {
 		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -113,7 +118,12 @@ func (uh *Userhandlers) DeleteBookmark(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body has Parameters missing")
 		return
 	}
-	data, err := uh.Service.DeleteBookmark("27eff3d7-e657-4d91-936e-fd22c46337d5", b.ProjectId)
+	userId, err := middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	data, err := uh.Service.DeleteBookmark(userId, b.ProjectId)
 	if err != nil {
 		helpers.SendErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return

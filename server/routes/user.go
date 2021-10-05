@@ -16,9 +16,9 @@ func UserRoutes(apiRouter *gin.RouterGroup, db *gorm.DB) {
 		route.GET("/search", uh.FindUserByQuery)
 		route.GET("/", uh.FindUserById)
 		route.POST("/", uh.CreateUser)
-		route.DELETE("/", uh.DeleteUser)
+		route.DELETE("/", middleware.TokenAuthMiddleware(), uh.DeleteUser)
 		route.PUT("/", middleware.TokenAuthMiddleware(), uh.UpdateUser)
-		route.POST("/create-bookmark", uh.CreateBookmark)
-		route.DELETE("/delete-bookmark", uh.DeleteBookmark)
+		route.POST("/create-bookmark", middleware.TokenAuthMiddleware(), uh.CreateBookmark)
+		route.DELETE("/delete-bookmark", middleware.TokenAuthMiddleware(), uh.DeleteBookmark)
 	}
 }

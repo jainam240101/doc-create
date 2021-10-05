@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -19,9 +20,9 @@ func (d UserRepositoryDb) CreateUser(u UserModel) (*UserModel, error) {
 	return &u, nil
 }
 
-func (d UserRepositoryDb) FindUserById(id string) (*UserModel, error) {
+func (d UserRepositoryDb) FindUserById(username string) (*UserModel, error) {
 	var userModel UserModel
-	if err := d.Client.Where("id=?", id).First(&userModel).Error; err != nil {
+	if err := d.Client.Where("username=?", username).First(&userModel).Error; err != nil {
 		fmt.Println("Error --- ", err.Error())
 		return nil, err
 	}
@@ -40,8 +41,9 @@ func (d UserRepositoryDb) SearchUser(searchString string) ([]UserModel, error) {
 
 func (db UserRepositoryDb) UpdateUser(userId string, updates UserModel) (*UserModel, error) {
 	var userModel UserModel
-	if err := db.Client.Model(&UserModel{}).Where("id = ?", userId).Updates(updates).Error; err != nil {
-		return nil, err
+	result := db.Client.Model(&UserModel{}).Where("id = ?", userId).Updates(updates)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return nil, errors.New("you do not have the permission")
 	}
 	if err := db.Client.Where("id=?", userId).First(&userModel).Error; err != nil {
 		fmt.Println("Error --- ", err.Error())
@@ -51,10 +53,9 @@ func (db UserRepositoryDb) UpdateUser(userId string, updates UserModel) (*UserMo
 }
 
 func (db UserRepositoryDb) DeleteUser(userId string) error {
-	fmt.Println("USER ID --- ", userId)
-	if err := db.Client.Where("id=?", userId).Delete(&UserModel{}).Error; err != nil {
-		fmt.Println("ERROR  --- ", err)
-		return err
+	result := db.Client.Where("id=?", userId).Delete(&UserModel{})
+	if result.Error != nil || result.RowsAffected == 0 {
+		return errors.New("you do not have the permission")
 	}
 	return nil
 }

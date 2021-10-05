@@ -99,7 +99,7 @@ func (db DefaultDocumentService) GetDocumentData(slug string) (*dto.DocumentResp
 func (db DefaultDocumentService) UpdateDocument(slug string, userId string, d documents.DocumentModel) (*dto.DocumentResponse, error) {
 	id := strings.SplitAfter(slug, "--")[1]
 	if d.Name != "" {
-		d.Slug = d.Slug + "--" + id
+		d.Slug = helpers.CreateSlug(d.Name) + "--" + id
 	}
 	newValue, err := db.repo.UpdateDocument(id, slug, userId, d)
 	if err != nil {

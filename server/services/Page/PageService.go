@@ -23,9 +23,10 @@ type PageService interface {
 	GetTitlesofDocument(string) ([]Title, error)
 	GetDataofPage(string) (*dto.PageResponse, error)
 	UpdatePage(string, pages.PageModel) (*dto.PageResponse, error)
-	DeletePage(string) error
-	ChangeOrder(string, []string) ([]Title, error)
-	ForkPages(string, string,string) error
+	EditingPage(string, string) (*dto.PageResponse, error)
+	DeletePage(string, string) error
+	ChangeOrder(string, []string, string) ([]Title, error)
+	ForkPages(string, string, string) error
 }
 
 func NewPageService(repo pages.PageRepositoryDb) DefaultPageService {
@@ -68,26 +69,28 @@ func (db DefaultPageService) GetDataofPage(slug string) (*dto.PageResponse, erro
 
 func (db DefaultPageService) UpdatePage(slug string, page pages.PageModel) (*dto.PageResponse, error) {
 	id := strings.SplitAfter(slug, "--")[1]
+	fmt.Println("Service ID ---- ", id)
+
 	if page.Name != "" {
-		page.Slug = page.Slug + "--" + id
+		page.Slug = helpers.CreateSlug(page.Name) + "--" + id
 	}
-	newValue, err := db.repo.UpdatePage(slug, page)
+	newValue, err := db.repo.UpdatePage(slug, page, id)
 	if err != nil {
 		return nil, err
 	}
 	return newValue.ToDto(), nil
 }
 
-func (db DefaultPageService) DeletePage(slug string) error {
-	err := db.repo.DeletePage(slug)
+func (db DefaultPageService) DeletePage(userId string, slug string) error {
+	err := db.repo.DeletePage(slug, userId)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (db DefaultPageService) ChangeOrder(documentId string, value []string) ([]Title, error) {
-	data, err := db.repo.ChangeOrder(documentId, value)
+func (db DefaultPageService) ChangeOrder(documentId string, value []string, userId string) ([]Title, error) {
+	data, err := db.repo.ChangeOrder(documentId, value, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +108,7 @@ func (db DefaultPageService) ChangeOrder(documentId string, value []string) ([]T
 	return titles, nil
 }
 
-func (db DefaultPageService) ForkPages(documentId string, ownerId string,newDocumentId string) error {
+func (db DefaultPageService) ForkPages(documentId string, ownerId string, newDocumentId string) error {
 	data, err := db.repo.GetTitlesofDocument(documentId)
 	if err != nil {
 		fmt.Println("Error --- ", err)
@@ -113,13 +116,21 @@ func (db DefaultPageService) ForkPages(documentId string, ownerId string,newDocu
 	}
 	for _, value := range data {
 		value.ID = uuid.New()
-		value.OwnerId=ownerId
+		value.OwnerId = ownerId
 		value.Slug = helpers.CreateSlug(value.Name) + "--" + value.ID.String()
-		value.DocumentId=newDocumentId
+		value.DocumentId = newDocumentId
 		_, err := db.repo.CreateNewPage(value)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (db DefaultPageService) EditingPage(slug string, userId string) (*dto.PageResponse, error) {
+	data, err := db.repo.EditingPage(slug, userId)
+	if err != nil {
+		return nil, err
+	}
+	return data.ToDto(), nil
 }

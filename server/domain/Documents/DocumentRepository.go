@@ -1,7 +1,7 @@
 package documents
 
 import (
-	"fmt"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -62,9 +62,9 @@ func (db DocumentRepositoryDb) ReadSpecificProjectUsingSlug(slug string) (*Docum
 
 func (db DocumentRepositoryDb) UpdateDocument(id string, slug string, userId string, updates DocumentModel) (*DocumentModel, error) {
 	var documentModel DocumentModel
-	if err := db.Client.Model(&DocumentModel{}).Where("owner_id = ? AND slug= ? AND status= ?", userId, slug, "ongoing").Updates(updates).Error; err != nil {
-		fmt.Println("Error --- ", err)
-		return nil, err
+	result := db.Client.Model(&DocumentModel{}).Where("owner_id = ? AND slug= ?", userId, slug).Updates(updates)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return nil, errors.New("you do not have the permission to update the document")
 	}
 	if err := db.Client.Where("id = ?", id).First(&documentModel).Error; err != nil {
 		return nil, err
@@ -73,11 +73,9 @@ func (db DocumentRepositoryDb) UpdateDocument(id string, slug string, userId str
 }
 
 func (db DocumentRepositoryDb) DeleteDocument(userId string, slug string) error {
-	fmt.Println("Userid ---", userId)
-	fmt.Println("Slug ---", slug)
-	if err := db.Client.Where("owner_id=? AND slug=?", userId, slug).Delete(&DocumentModel{}).Error; err != nil {
-		fmt.Println("Error --- ", err)
-		return err
+	result := db.Client.Where("owner_id=? AND slug=?", userId, slug).Delete(&DocumentModel{})
+	if result.Error != nil || result.RowsAffected == 0 {
+		return errors.New("you do not have the permission to update the document")
 	}
 	return nil
 }

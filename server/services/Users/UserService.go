@@ -15,7 +15,7 @@ type DefaultUserService struct {
 
 type UserService interface {
 	CreateUser(users.UserModel) (*dto.UserResponse, error)
-	FindUserById(string) (*dto.UserResponse, error)
+	FindUserByUsername(string) (*dto.UserResponse, error)
 	SearchUser(string) ([]dto.UserResponse, error)
 	UpdateUser(users.UserModel, string) (*dto.UserResponse, error)
 	DeleteUser(string) error
@@ -49,8 +49,8 @@ func (db DefaultUserService) CreateUser(u users.UserModel) (*dto.UserResponse, e
 	return user.ToDto(), nil
 }
 
-func (db DefaultUserService) FindUserById(id string) (*dto.UserResponse, error) {
-	user, err := db.repo.FindUserById(id)
+func (db DefaultUserService) FindUserByUsername(username string) (*dto.UserResponse, error) {
+	user, err := db.repo.FindUserById(username)
 	if err != nil {
 		return nil, err
 	}

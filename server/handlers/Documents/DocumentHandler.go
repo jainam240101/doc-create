@@ -2,10 +2,12 @@ package documents
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	domain "github.com/jainam240101/doc-create/server/domain/Documents"
 	"github.com/jainam240101/doc-create/server/helpers"
+	"github.com/jainam240101/doc-create/server/middleware"
 	service "github.com/jainam240101/doc-create/server/services/Documents"
 )
 
@@ -20,7 +22,12 @@ func (dh *DocumentHandlers) CreateDocument(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "Body Not proper")
 		return
 	}
-	d.OwnerId = "1234"
+	var err error
+	d.OwnerId, err = middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, "Unuthorized")
+		return
+	}
 	document, err := dh.Service.CreateDocument(d)
 	if err != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
@@ -28,14 +35,6 @@ func (dh *DocumentHandlers) CreateDocument(c *gin.Context) {
 
 	}
 	helpers.SendSuccessResponse(c, 200, document)
-}
-func (dh *DocumentHandlers) ReadDocument(c *gin.Context) {
-	data, err := dh.Service.ReadDocument()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	helpers.SendSuccessResponse(c, 200, data)
 }
 
 func (dh *DocumentHandlers) FindDocumentByQuery(c *gin.Context) {
@@ -53,7 +52,11 @@ func (dh *DocumentHandlers) FindDocumentByQuery(c *gin.Context) {
 }
 
 func (dh *DocumentHandlers) OwnedDocument(c *gin.Context) {
-	userId := "231"
+	userId, err := middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, "Unuthorized")
+		return
+	}
 	data, err := dh.Service.OwnedDocuments(userId)
 	if err != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
@@ -63,7 +66,11 @@ func (dh *DocumentHandlers) OwnedDocument(c *gin.Context) {
 }
 
 func (dh *DocumentHandlers) ReadAllProjectsPublishedByUser(c *gin.Context) {
-	userId := "1234"
+	userId := c.Param("userId")
+	if userId == "" {
+		helpers.SendErrorResponse(c, 406, "No User Provided")
+		return
+	}
 	data, err := dh.Service.ReadAllProjectsPublishedByUser(userId)
 	if err != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
@@ -92,13 +99,18 @@ func (dh *DocumentHandlers) UpdateDocument(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "No Slug Provided")
 		return
 	}
-	userId := "1234"
+	userId, err := middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, "Unuthorized")
+		return
+	}
 	d := domain.DocumentModel{}
 	if err := c.ShouldBindJSON(&d); err != nil {
 		fmt.Println(err.Error())
 		helpers.SendErrorResponse(c, 406, "Body Not proper")
 		return
 	}
+	fmt.Println("UserId ------ ", userId)
 	data, err := dh.Service.UpdateDocument(slug, userId, d)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -114,9 +126,13 @@ func (dh *DocumentHandlers) DeleteDocument(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "No Slug Provided")
 		return
 	}
-	userId := "1234"
-	err := dh.Service.DeleteDocument(userId, slug)
+	userId, err := middleware.GetUserId(c)
 	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, "Unuthorized")
+		return
+	}
+	docError := dh.Service.DeleteDocument(userId, slug)
+	if docError != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
 		return
 	}
@@ -129,7 +145,11 @@ func (dh *DocumentHandlers) ForkDocument(c *gin.Context) {
 		helpers.SendErrorResponse(c, 406, "No Slug Provided")
 		return
 	}
-	userId := "2401"
+	userId, err := middleware.GetUserId(c)
+	if err != nil {
+		helpers.SendErrorResponse(c, http.StatusUnauthorized, "Unuthorized")
+		return
+	}
 	data, err := dh.Service.ForkDocument(slug, userId)
 	if err != nil {
 		helpers.SendErrorResponse(c, 406, err.Error())
