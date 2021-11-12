@@ -31,7 +31,7 @@ func (uh *Userhandlers) CreateUser(c *gin.Context) {
 func (uh *Userhandlers) FindUserById(c *gin.Context) {
 	username := c.Request.URL.Query().Get("username")
 	if username == "" {
-		helpers.SendErrorResponse(c, 406, "No username Provided")
+		helpers.SendSuccessResponse(c, 200, []string{})
 		return
 	}
 	user, err := uh.Service.FindUserByUsername(username)
@@ -45,7 +45,7 @@ func (uh *Userhandlers) FindUserById(c *gin.Context) {
 func (uh *Userhandlers) FindUserByQuery(c *gin.Context) {
 	search := c.Request.URL.Query().Get("search")
 	if search == "" {
-		helpers.SendErrorResponse(c, 406, "No Search Provided")
+		helpers.SendSuccessResponse(c, 200, []string{})
 		return
 	}
 	data, err := uh.Service.SearchUser(search)

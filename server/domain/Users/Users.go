@@ -31,8 +31,8 @@ func (c UserModel) ToDto() *dto.UserResponse {
 
 type UserRepository interface {
 	CreateUser(UserModel) (*UserModel, error)
-	FindUserById(string) (*UserModel, error)
 	SearchUser(string) ([]UserModel, error)
+	FindUserById(string) (*UserModel, error)
 	UpdateUser(string, UserModel) (*UserModel, error)
 	DeleteUser(string) error
 }

@@ -40,7 +40,7 @@ func (dh *DocumentHandlers) CreateDocument(c *gin.Context) {
 func (dh *DocumentHandlers) FindDocumentByQuery(c *gin.Context) {
 	search := c.Request.URL.Query().Get("query")
 	if search == "" {
-		helpers.SendErrorResponse(c, 406, "No Search Provided")
+		helpers.SendSuccessResponse(c, 200, []string{})
 		return
 	}
 	data, err := dh.Service.SearchDocument(search)

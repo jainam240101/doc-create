@@ -39,10 +39,6 @@ func (db PageRepositoryDb) GetDataofPage(slug string) (*PageModel, error) {
 	if err := db.Client.Where("id=?", data.DocumentId).Find(&doc).Error; err != nil {
 		return nil, err
 	}
-	if doc.Status != "Published" {
-		return nil, errors.New("page not published")
-
-	}
 	return &data, nil
 }
 

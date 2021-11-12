@@ -25,6 +25,7 @@ func (d DocumentModel) ToDto() *dto.DocumentResponse {
 		Status:      d.Status,
 		Description: d.Description,
 		Font:        d.Font,
+		
 	}
 }
 
