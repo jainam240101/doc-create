@@ -72,4 +72,7 @@ Don't forget to give the project a star! Thanks again!
 ## Contact
 
 Jainam Mehta - [@jainam240101](https://twitter.com/jainam240101) - jainamm47@gmail.com
+<br/>
+Pratikraj Rajput - [@praj31](https://twitter.com/praj31) - rajputpraj.31@gmail.com
+
 
