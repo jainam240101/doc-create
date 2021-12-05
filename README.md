@@ -45,16 +45,7 @@ This is an example of how to list things you need to use the software and how to
 * Redis
 * PostgreSQL
 
-### Prerequisites
 
-This is list of things that you need to use the software
-  GoLang
-  Redis
-  PostgreSQL
-  JWT
-  ReactJS
-  NextJS
-  
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
